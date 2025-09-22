@@ -1,0 +1,68 @@
+#include <stdio.h>
+struct process
+{
+    int pid;
+    int arrT;
+    int busT;
+    int TAT;
+    int WT;
+    int compT;
+};
+int main()
+{
+    int n;
+    printf("How many process are there\n");
+    scanf("%d", &n);
+    struct process p[n];
+    int i;
+    for (i = 0; i < n; i++)
+    {
+        p[i].pid = i+1;
+        printf("\nEnter a arrivel time for process: %d \t", i+1);
+        scanf("%d", &p[i].arrT);
+        printf("\nEnter a bus time for process: %d \t", i+1);
+        scanf("%d", &p[i].busT);
+    }
+    int j, completed = 0, done[n], time = 0, totalTAT = 0, totalWT = 0;
+    for (i = 0; i < n; i++)
+    {
+        done[i] = 0;
+    }
+    while (completed < n)
+    {
+        int i = -1, min = 999;
+        for (j = 0; j < n; j++)
+        {
+            if (p[j].arrT <= time && p[j].busT < min && !done[j])
+            {
+                min = p[j].busT;
+                i = j;
+            }
+        }
+        if (i != -1)
+        {
+            time += p[i].busT;
+            p[i].compT = time;
+            done[i] = 1;
+            p[i].TAT = time - p[i].arrT;
+            p[i].WT = p[i].TAT - p[i].busT;
+            completed++;
+
+            totalTAT += p[i].TAT;
+            totalWT += p[i].WT;
+        }
+        else
+        {
+            time++;
+        }
+    }
+    printf("\npid\tarrT\tbusT\tCT\tTAT\tWT\n");
+    for (i = 0; i < n; i++)
+    {
+        printf("\n%d\t%d\t%d\t%d\t%d\t%d\n", p[i].pid, p[i].arrT, p[i].busT, p[i].compT, p[i].TAT, p[i].WT);
+    }
+    printf("\nAvrage TAT = %.2f\t",(float)totalTAT/n);
+    printf("\nAvrage WT = %.2f\t",(float)totalWT/n);
+
+    return 0;
+}

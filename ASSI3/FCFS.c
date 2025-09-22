@@ -1,0 +1,71 @@
+#include<stdio.h>
+struct process
+{
+    int pid;
+    int arrT;
+    int busT;
+    int turnT;
+    int waitT;
+
+};
+
+int main()
+{ 
+    int n,i,j;
+    printf("How many process are there\n");
+    scanf("%d",&n);
+    struct process p[n];
+    for (i = 0; i < n; i++)
+    {
+        p[i].pid=i+1;
+        printf("\n%d's arrivel time:=",i+1);
+        scanf("%d",&p[i].arrT);
+        printf("\n%d's burest time:=",i+1);
+        scanf("%d",&p[i].busT);
+
+    }
+    for ( i = 0; i < n; i++)
+    {
+        for ( j = i+1; j < n; j++)
+        {
+            if (p[i].arrT>p[j].arrT)
+            {
+                struct process temp=p[i];
+                p[i]=p[j];
+                p[j]=temp;
+            }
+            
+        }
+        
+    }
+    int currT=0,compT=0,totalTAT=0,totalWT=0;
+    for ( i = 0; i < n; i++)
+    {
+        if (currT<p[i].arrT)
+        {
+            printf("idle (%d->%d)\t",currT,p[i].arrT);
+            currT=p[i].arrT;
+        }
+        printf("p%d(%d->%d)\t",p[i].pid,currT,currT+p[i].busT);
+        currT+=p[i].busT;
+
+        p[i].turnT=currT-p[i].arrT;
+        p[i].waitT=p[i].turnT-p[i].busT;
+
+        totalTAT+=p[i].turnT;
+        totalWT+=p[i].waitT;
+    }
+    printf("\npid\tAT\tBT\tTAT\tWT\n");
+    for ( i = 0; i < n; i++)
+    {
+        printf("%d\t%d\t%d\t%d\t%d\n",p[i].pid,p[i].arrT,p[i].busT,p[i].turnT,p[i].waitT);
+    }
+    
+    int avgTAT,avgWT;
+    avgTAT=(float)totalTAT/n;
+    avgWT=(float)totalWT/n;
+    printf("avrage TAT = %d\n",avgTAT);
+    printf("avrage WT = %d\n",avgWT);
+    
+    return 0;
+}
