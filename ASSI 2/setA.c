@@ -1,101 +1,72 @@
 #include<stdio.h>
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<unistd.h>
-#include<dirent.h>
-#include<fcntl.h>
-#include<stdlib.h>
 #include<string.h>
-#include<sys/wait.h>
-int count(char c,char *fn){
-	int lc=0,wc=0,cc=0,handle;
+#include<sys/types.h>
+#include <unistd.h>
+#include<stdlib.h>
+void count(char t2,char *t3){
+
+	FILE *fp=fopen(t3,"r");
+	int c=0,w=0,l=0;
 	char ch;
-	if((handle=open(fn,O_RDONLY))==-1)
-	{
-		printf("File %s not found\n",fn);
-		return 0;
+	if(fp==NULL){
+		printf("File open error\n");
+		return;
 	}
-	while(read(handle,&ch,1)!=0)
-	{
-		if(ch==' ')
-			wc++;
-		else if(ch=='\n')
-			lc++;
-		else
-			cc++;
+	while((ch=fgetc(fp))!=EOF){
+		c++;
+		if(ch==' ' || ch==','|| ch=='.'){
+			w++;
+		}else if(ch=='\n'){
+			l++;
+		}
 	}
-	close(handle);
-	switch(c)
-	{
-	case 'c':
-		printf("Total No.of Characters = %d\n",cc);
-		break;
-	case 'w':
-		printf("Total No.of words = %d\n",wc);
-		break;
-	
-	case 'l':
+	if(t2=='c'){
+		printf("charector count is: %d",c);
+	}else if(t2=='w'){
+		printf("world count is: %d",w);
+	}else if(t2=='l'){
+		printf("Line count is: %d",l);
+	}else printf("Wrong input");
 		
-		printf("Total No.of Lines = %d\n",lc);
-		break;
-	}
-    return 0;
 }
 int main(){
-		
-	char command[80],t1[20],t2[20],t3[20],t4[20];		
-	char n;
+	char command[80],t1[20],t2[20],t3[20],t4[20];
 	system("clear");
+	char n;
 	while(1){
-	
-	printf("myShell");
-	//fflush(stdin);
-	fgets(command,80,stdin);	
-	n=sscanf(command,"%s%s%s%s",t1,t2,t3,t4);		
-	switch(n){
-		case 1: 
-			if(!fork())
-			{
-				execlp(t1,t1,(char *)NULL);
-				//perror(t1);
-				printf("File does not open\n");
-			}
-			break;
-		case 2: 
-			if(!fork())
-			{
-				execlp(t1,t2,(char *)NULL);
-				perror(t1);
-			}
-			break;
-		case 3: 
-			if(strcmp(t1,"count")==0)
-			{
-				count(t2[0],t3);
-			}else{ 
-				if(!fork())
-				{
-					execlp(t1,t2,t3,(char *)NULL);
-					perror(t1);
+		printf("\n$Myshell ");
+		fgets(command,80,stdin);
+		n=sscanf(command,"%s%s%s%s",t1,t2,t3,t4);
+		switch(n){
+			case 1:
+				if(!fork()){
+					execlp(t1,t1,(char*)NULL);
+					printf("File does not open\n");
+				}	
+				break;
+			case 2:
+				if(!fork()){
+					execlp(t1,t2,(char*)NULL);
+					printf("File does not open\n");
+				}	
+				break;
+			case 3:
+				if(strcmp(t1,"count")==0){
+					count(t2[0],t3);
+					
 				}
-				wait(NULL);			
-			}
-			break;
-		
-		case 4: 
-			if(!fork())
-			{
-				execlp(t1,t2,t3,t4,NULL);
-				perror(t1);
-			}
-			break;
-		case 0: exit(0);
-		
+				else if(!fork()){
+					execlp(t1,t3,(char*)NULL);
+					printf("File does not open\n");
+				}					
+				break;
+			case 4:
+				if(!fork()){
+					execlp(t1,t4,(char*)NULL);
+					printf("File does not open\n");
+				}				
+				break;
+		}
 	}
-	}
-	
-	return 0;	
+	return 0;
 }
-
-
-
